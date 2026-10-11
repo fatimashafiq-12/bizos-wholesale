@@ -1,0 +1,32 @@
+"use client";
+import Link from "next/link";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Bell, ChevronDown, Heart, Menu, Search, ShoppingCart, User, X } from "lucide-react";
+import { CartDrawer } from "@/components/cart/cart-drawer";
+import { categories, products } from "@/data/products";
+import { useCartStore } from "@/store/cart-store";
+import { useWishlistStore } from "@/store/wishlist-store";
+
+const links = [["Home","/"],["Products","/products"],["Wholesale","/wholesale"],["Deals","/deals"],["About","/about"],["Contact","/contact"]] as const;
+
+export function Header(){
+  const [mobile,setMobile]=useState(false); const [searchOpen,setSearchOpen]=useState(false); const [cartOpen,setCartOpen]=useState(false); const [query,setQuery]=useState("");
+  const cartCount=useCartStore(s=>s.items.reduce((n,i)=>n+i.quantity,0)); const wishCount=useWishlistStore(s=>s.items.length);
+  const suggestions=query ? products.filter(p=>[p.name,p.brand,p.departmentName,p.sku].some(v=>v.toLowerCase().includes(query.toLowerCase()))).slice(0,5) : [];
+  return <header className="sticky top-0 z-50 border-b border-black/10 bg-white/95 backdrop-blur">
+    <div className="container-page flex h-16 items-center gap-4"><Link href="/" className="shrink-0"><span className="text-xl font-black tracking-tight text-navy">Biz<span className="text-accent">OS</span></span><span className="ml-2 hidden text-xs text-black/50 sm:inline">E-commerce Wholesale</span></Link>
+      <nav className="hidden flex-1 items-center justify-center gap-1 lg:flex">
+        <Link href="/" className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-surface">Home</Link>
+        <div className="group relative"><Link href="/categories" className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-surface">Categories<ChevronDown className="h-3.5 w-3.5"/></Link><div className="invisible absolute left-1/2 top-full z-50 mt-2 w-[560px] -translate-x-1/2 translate-y-1 rounded-2xl border bg-white p-5 opacity-0 shadow-2xl transition group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100"><div className="grid grid-cols-3 gap-2">{categories.map(c=><Link key={c} href={`/products?category=${encodeURIComponent(c)}`} className="rounded-xl p-3 hover:bg-surface"><div className="font-bold text-navy">{c}</div><div className="mt-1 text-xs text-black/45">Browse wholesale</div></Link>)}</div></div></div>
+        {links.slice(1).map(([l,h])=><Link key={h} href={h} className="rounded-lg px-3 py-2 text-sm font-medium text-navy hover:bg-surface">{l}</Link>)}
+      </nav>
+      <div className="ml-auto flex items-center gap-1"><button aria-label="Search" className="focus-ring rounded-lg p-2 hover:bg-surface" onClick={()=>setSearchOpen(v=>!v)}><Search className="h-5 w-5"/></button><Link aria-label="Wishlist" href="/account/wishlist" className="focus-ring relative rounded-lg p-2 hover:bg-surface"><Heart className="h-5 w-5"/>{wishCount>0&&<span className="absolute -right-1 -top-1 rounded-full bg-accent px-1.5 text-[10px] font-bold">{wishCount}</span>}</Link><Link aria-label="Notifications" href="/account/notifications" className="focus-ring hidden rounded-lg p-2 hover:bg-surface sm:inline-flex"><Bell className="h-5 w-5"/></Link><button aria-label="Cart" onClick={()=>setCartOpen(true)} className="focus-ring relative rounded-lg p-2 hover:bg-surface"><ShoppingCart className="h-5 w-5"/>{cartCount>0&&<span className="absolute -right-1 -top-1 rounded-full bg-accent px-1.5 text-[10px] font-bold">{cartCount}</span>}</button>
+        <div className="group relative hidden sm:block"><Link aria-label="Account" href="/account" className="focus-ring flex rounded-lg p-2 hover:bg-surface"><User className="h-5 w-5"/></Link><div className="invisible absolute right-0 top-full mt-2 w-48 translate-y-1 rounded-xl border bg-white p-2 opacity-0 shadow-soft transition group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100"><Link href="/account" className="block rounded-lg px-3 py-2 text-sm hover:bg-surface">My Account</Link><Link href="/login" className="block rounded-lg px-3 py-2 text-sm hover:bg-surface">Login</Link><Link href="/register" className="block rounded-lg px-3 py-2 text-sm hover:bg-surface">Register</Link><Link href="/admin" className="block rounded-lg px-3 py-2 text-sm hover:bg-surface">Admin</Link></div></div>
+        <button aria-label="Menu" className="focus-ring rounded-lg p-2 lg:hidden" onClick={()=>setMobile(v=>!v)}>{mobile?<X/>:<Menu/>}</button></div>
+    </div>
+    <AnimatePresence>{searchOpen&&<motion.div initial={{opacity:0,y:-6}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-6}} className="border-t border-black/10 bg-white"><div className="container-page py-3"><form action="/search" className="relative"><input name="q" value={query} onChange={e=>setQuery(e.target.value)} autoFocus placeholder="Search products, categories, brands, SKU..." className="focus-ring h-11 w-full rounded-xl border border-black/10 px-4 pr-12"/><button aria-label="Submit search" className="absolute right-2 top-1.5 rounded-lg bg-navy p-2 text-white"><Search className="h-4 w-4"/></button>{suggestions.length>0&&<div className="absolute left-0 right-0 top-12 z-50 rounded-xl border bg-white p-2 shadow-soft">{suggestions.map(p=><Link onClick={()=>setSearchOpen(false)} className="block rounded-lg px-3 py-2 text-sm hover:bg-surface" href={`/products/${p.slug}`} key={p.id}>{p.name} <span className="text-black/40">{p.sku}</span></Link>)}</div>}</form></div></motion.div>}</AnimatePresence>
+    <AnimatePresence>{mobile&&<motion.nav initial={{opacity:0,height:0}} animate={{opacity:1,height:"auto"}} exit={{opacity:0,height:0}} className="overflow-hidden border-t bg-white p-4 lg:hidden"><Link onClick={()=>setMobile(false)} href="/categories" className="block rounded-lg px-3 py-3 font-medium hover:bg-surface">Categories</Link>{links.map(([l,h])=><Link onClick={()=>setMobile(false)} key={h} href={h} className="block rounded-lg px-3 py-3 font-medium hover:bg-surface">{l}</Link>)}<Link onClick={()=>setMobile(false)} href="/account" className="block rounded-lg px-3 py-3 font-medium hover:bg-surface">Account</Link></motion.nav>}</AnimatePresence>
+    <CartDrawer open={cartOpen} onClose={()=>setCartOpen(false)}/>
+  </header>
+}

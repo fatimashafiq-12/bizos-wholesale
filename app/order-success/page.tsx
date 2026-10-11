@@ -1,0 +1,1 @@
+import {OrderSuccessCard} from "@/components/checkout/order-success-card";export default async function OrderSuccess({searchParams}:{searchParams:Promise<{order?:string}>}){const p=await searchParams;return <div className="container-page py-20"><OrderSuccessCard orderId={p.order}/></div>}

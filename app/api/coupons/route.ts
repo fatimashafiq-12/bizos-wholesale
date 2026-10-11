@@ -1,0 +1,1 @@
+import {NextResponse} from "next/server";import {coupons} from "@/data/content";export async function GET(){return NextResponse.json(coupons.map(({code,discountType,discountValue,minimumOrder,maximumDiscount,expiryDate,active})=>({code,discountType,discountValue,minimumOrder,maximumDiscount,expiryDate,active})))}

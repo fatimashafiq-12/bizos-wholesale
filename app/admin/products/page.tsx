@@ -1,0 +1,1 @@
+import {ProductManager} from "@/components/admin/product-manager";import {products} from "@/data/products";export default function Page(){return <><h1 className="mb-6 text-3xl font-black text-navy">Product Management</h1><ProductManager initial={products}/></>}

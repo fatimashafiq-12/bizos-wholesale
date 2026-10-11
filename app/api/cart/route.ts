@@ -1,0 +1,1 @@
+import {NextResponse} from "next/server";export async function GET(){return NextResponse.json({message:"Cart state is client-persisted in the mock architecture and can be replaced by a database-backed service."})}

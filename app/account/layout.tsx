@@ -1,0 +1,2 @@
+import {cookies} from "next/headers";import {redirect} from "next/navigation";import {DashboardSidebar} from "@/components/dashboard/sidebar";
+export default async function Layout({children}:{children:React.ReactNode}){const jar=await cookies();if(!jar.get("bizos_session"))redirect("/login");return <div className="container-page grid gap-7 py-10 lg:grid-cols-[250px_1fr]"><DashboardSidebar/><section>{children}</section></div>}

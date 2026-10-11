@@ -1,0 +1,1 @@
+import {NextResponse} from "next/server";import {registerSchema} from "@/lib/validations";export async function POST(request:Request){const parsed=registerSchema.safeParse(await request.json());if(!parsed.success)return NextResponse.json({error:parsed.error.flatten()},{status:400});return NextResponse.json({ok:true,user:{email:parsed.data.email,fullName:parsed.data.fullName}})}

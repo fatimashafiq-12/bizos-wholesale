@@ -1,0 +1,1 @@
+import {CheckoutForm} from "@/components/checkout/checkout-form";export default function CheckoutPage(){return <div className="container-page py-10"><h1 className="mb-8 text-4xl font-black text-navy">Checkout</h1><CheckoutForm/></div>}

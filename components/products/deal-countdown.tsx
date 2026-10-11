@@ -1,0 +1,3 @@
+"use client";
+import {useEffect,useState} from "react";
+export function DealCountdown(){const[target]=useState(()=>Date.now()+6*60*60*1000);const[left,setLeft]=useState(target-Date.now());useEffect(()=>{const id=setInterval(()=>setLeft(Math.max(0,target-Date.now())),1000);return()=>clearInterval(id)},[target]);const h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),s=Math.floor(left%60000/1000);return <div className="flex gap-2 text-sm font-black text-navy"><span className="rounded-lg bg-white px-3 py-2">{String(h).padStart(2,'0')}h</span><span className="rounded-lg bg-white px-3 py-2">{String(m).padStart(2,'0')}m</span><span className="rounded-lg bg-white px-3 py-2">{String(s).padStart(2,'0')}s</span></div>}

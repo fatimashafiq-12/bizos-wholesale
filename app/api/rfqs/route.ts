@@ -1,0 +1,1 @@
+import {NextResponse} from "next/server";import {rfqSchema} from "@/lib/validations";export async function POST(req:Request){const p=rfqSchema.safeParse(await req.json());if(!p.success)return NextResponse.json({error:p.error.flatten()},{status:400});return NextResponse.json({id:`RFQ-${Date.now().toString().slice(-6)}`,status:"Submitted"},{status:201})}

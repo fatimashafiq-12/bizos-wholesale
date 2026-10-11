@@ -1,0 +1,2 @@
+import {NextResponse} from "next/server";import {loginSchema} from "@/lib/validations";
+export async function POST(request:Request){const parsed=loginSchema.safeParse(await request.json());if(!parsed.success)return NextResponse.json({error:"Invalid credentials"},{status:400});const role=parsed.data.email.toLowerCase()==="admin@bizos.local"?"admin":"customer";const res=NextResponse.json({ok:true,role});res.cookies.set("bizos_session",role,{httpOnly:true,sameSite:"lax",secure:process.env.NODE_ENV==="production",path:"/",maxAge:60*60*8});return res}
